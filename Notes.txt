@@ -1,0 +1,50 @@
+Python Version 3.8.10
+1. python -m venv venv 
+2. pip install opencv-python
+3. pip install opencv-contrib-python
+4. pip install autopy
+5. pip install mediapipe
+6. pip install HandTrackingModule
+
+
+
+// step - 1 : Capture Footage
+import cv2
+capture = cv2.VideoCapture(0)
+while True:
+    _,frame = capture.read()
+    cv2.imshow("Virtual Mouse",frame)
+    cv2.waitKey(1)
+
+
+// Step - 2 : Hand Capture
+import mediapipe as mp
+# Initialize MediaPipe Hand module
+mp_hands = mp.solutions.hands
+hands_detector = mp_hands.Hands()
+drawing_utils = mp.solutions.drawing_utils
+
+rbg_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = hands_detector.process(rbg_frame)
+    hands = results.multi_hand_landmarks
+    print(hands)
+    if hands:
+        for hand in hands:
+            drawing_utils.draw_landmarks(frame, hand)
+
+
+// Step 3 : Hand Landmarks
+the o/p which we are getting is mirror view so to get the exact same view rotate the mirror
+frame = cv2.flip(frame,1)
+
+# Finger Action
+            landmarks = hand.landmark
+            for id,landmark in enumerate(landmarks):
+                x = landmark.x
+                y = landmark.y
+                print(x,y)
+
+
+// Step 4 : Color Main Finger
+if id == 8 :
+    cv2.circle(img=frame, center=(x, y), radius=10, color=(0, 255, 255))
